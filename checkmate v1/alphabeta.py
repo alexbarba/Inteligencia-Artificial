@@ -43,7 +43,7 @@ class chessMove:
 				return 2521
 			elif "K" in to:
 				return 500
-							
+					
 		return 0
 		
 	def setScore(self, newvalue):
@@ -68,54 +68,44 @@ class CMtree:
 		self.board = board
 		self.color = color
 		self.Rules = ChessRules()
-		self.tree = []
-		self.initTree()
+		self.tree = self.createNodeLevel(self.board, self.color, 0, None)
 		self.optime = -1
 		self.nextmove = chessMove()
 		
+	def makeMove(self, f, t, board):
+		toBoard = deepcopy(board)
+		toBoard[t[0]][t[1]] = board[f[0]][f[1]]
+		toBoard[f[0]][f[1]] = 'e'
+		return toBoard
 		
-	def initTree(self):
-		myPieces = self.getMyPiecesWithLegalMoves(self.board, self.color)
-		if myPieces > 0:
-			
-			for f in myPieces:
-				for t in self.Rules.GetListOfValidMoves(self.board,self.color,(f[0],f[1])):
-					self.tree.append(chessMove(None, f, t, self.board, 0))
-					toBoard = deepcopy(self.board)
-					toBoard[t[0]][t[1]] = self.board[f[0]][f[1]]
-					toBoard[f[0]][f[1]] = 'e'
-					self.cTree(toBoard, self.tree[-1])
-			
+	def unmakeMove(self, f, t, board):
+		toBoard = deepcopy(board)
+		toBoard[f[0]][f[1]] = board[t[0]][t[1]]
+		toBoard[t[0]][t[1]] = 'e'
+		return toBoard
 		
-	def cTree(self, board, root):
-		if root.lvl >= self.lvl:
-			return root
-		
-		for f in self.getMyPiecesWithLegalMoves(board, root.getEnemyColor()):
-			for t in self.Rules.GetListOfValidMoves(board,root.getEnemyColor(),(f[0],f[1])):
-				root.children.append(chessMove(root, f, t, board, root.lvl+1))
-				if root.children[-1].color in self.color:
-					root.children[-1].setScore (root.score + root.children[-1].score)
-				else:
-					root.children[-1].setScore (root.score - root.children[-1].score)
+	def createNodeLevel(self, board, color, lvl, dad):
+		for f in self.Rules.getMyPiecesWithLegalMoves(board, color):
+			for t in self.Rules.GetListOfValidMoves(board, color,(f[0],f[1])):
+				yield chessMove(dad, f, t, board, lvl)
+				
 					
-				toBoard = deepcopy(board)
-				toBoard[t[0]][t[1]] = toBoard[f[0]][f[1]]
-				toBoard[f[0]][f[1]] = 'e'
-				self.cTree(toBoard, root.children[-1])
-					
-	def getMyPiecesWithLegalMoves(self,board,color):
-		#get list of my pieces
-		myPieces = []
-		for row in range(8):
-			for col in range(8):
-				piece = board[row][col]
-				if color[0] in piece:
-					if len(self.Rules.GetListOfValidMoves(board,color,(row,col))) > 0:
-						myPieces.append((row,col))	
+	def positionEvaluation(self, dad):
+		if dad.children[-1].color in self.color:
+			dad.children[-1].setScore (dad.score + dad.children[-1].score)
+		else:
+			dad.children[-1].setScore (dad.score - dad.children[-1].score)
+				
+	def alphabeta2(self, move, alpha, beta):
+		if move.lvl == self.lvl
+			return move.score
+			
+		for f in self.Rules.getMyPiecesWithLegalMoves(move.board, color):
+			for t in self.Rules.GetListOfValidMoves(move.board, color,(f[0],f[1])):
+				chessMove(dad, f, t, board, lvl)
 		
-		return myPieces
-	
+		
+		
 	def alphabeta(self, n, alpha, beta):
 		if (n.children):
 			if (n.color == self.color):

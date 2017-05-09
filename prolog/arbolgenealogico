@@ -1,0 +1,62 @@
+% This buffer is for notes you don't want to save.
+% If you want to create a file, visit that file with C-x C-f,
+% then enter the text in that file's own buffer.
+
+hijo(alexis,ubaldo,lourdes). % Jesus es hijo de José y María
+hija(marlinka,ubaldo,lourdes).  % Magdalena es hijo de José y María
+hijo(amilcar,ubaldo, lourdes).
+hija(lourdes, jose, maria).
+hijo(ubaldo, jose2,lorena).
+hija(lucy, jose, maria).
+hijo(victor, jose, maria).
+hija(irene, jose, maria).
+hijo(servando, jose2, lorena).
+hija(rosa, jose2, lorena).
+hija(evelyn, irene, fernando).
+hijo(fernandojr, irene, fernando).
+hijo(manuel, lucy, juan).
+hija(rosaura, lucy, juan).
+hijo(pablo,servando,martha).
+
+
+% X es papa de Y
+papa(X,Y) :- hijo(Y,X,_).
+papa(X, Y) :- hija(Y, X,_).
+
+mama(X,Y) :- hijo(Y,_,X).
+mama(X,Y) :- hija(Y,_,X).
+
+hermano(X,Y) :- hijo(X,P,M), hijo(Y,P,M),X\=Y.
+hermano(X,Y) :- hijo(X,P,M), hija(Y,P,M).
+
+hermana(X,Y) :- hija(X,P,M), hijo(Y,P,M).
+hermano(X,Y) :- hija(X,P,M), hija(Y,P,M),X\=Y.
+
+
+abuelo(X, Y) :- papa(X,Z),papa(Z,Y).
+abuelo(X, Y) :- papa(X,Z),mama(Z,Y).
+abuela(X,Y):-mamá(X,Z),papá(Z,Y).
+abuela(X,Y):-mamá(X,Z),mamá(Z,Y).
+
+%X es prima de Y
+prima(X,Y):-abuelo(Z,X),abuelo(Z,Y),not(hermana(X,Y)),hija(X,_,_),X\=Y.
+primo(X,Y):-abuelo(Z,X),abuelo(Z,Y),not(hermano(X,Y)),hijo(X,_,_),X\=Y.
+
+%X es nieto de Y
+nieto(X,Y):-abuelo(Y,X),hijo(X,_,_).
+nieto(X,Y):-abuela(Y,X),hijo(X,_,_).
+nieta(X,Y):-abuelo(Y,X),hija(X,_,_).
+nieta(X,Y):-abuela(Y,X),hija(X,_,_).
+
+%X es tío de Y
+tio(X,Y):-papá(Z,Y),hermano(Z,X),hijo(X,_,_).
+tio(X,Y):-mamá(Z,Y),hermana(Z,X),hijo(X,_,_).
+
+tia(X,Y):-papá(Z,Y),hermano(Z,X),hija(X,_,_).
+tia(X,Y):-mamá(Z,Y),hermana(Z,X),hija(X,_,_).
+
+%X es sorbino de Y
+sobrino(X,Y):-tio(Y,X),hijo(X,_,_).
+sobrino(X,Y):-tia(Y,X),hijo(X,_,_).
+sobrina(X,Y):-tio(Y,X),hija(X,_,_).
+sobrina(X,Y):-tia(Y,X),hija(X,_,_).

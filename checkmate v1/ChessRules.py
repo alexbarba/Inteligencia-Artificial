@@ -32,7 +32,20 @@ class ChessRules:
 			return True
 		else:
 			return False
-
+	
+	def getMyPiecesWithLegalMoves(self,board,color):
+		#get list of my pieces
+		myPieces = []
+		for row in range(8):
+			for col in range(8):
+				piece = board[row][col]
+				if color[0] in piece:
+					if len(self.GetListOfValidMoves(board,color,(row,col))) > 0:
+						myPieces.append((row,col))	
+		
+		return myPieces
+	
+	
 	def GetListOfValidMoves(self,board,color,fromTuple):
 		legalDestinationSpaces = []
 		for row in range(8):
