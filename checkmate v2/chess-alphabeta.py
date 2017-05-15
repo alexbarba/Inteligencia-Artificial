@@ -1,8 +1,4 @@
 import chess
-import chess.pgn
-import chess.uci
-import chess.svg
-import spur
 import chess.polyglot
 import os
 clear = lambda: os.system('clear')
@@ -12,31 +8,34 @@ class chessAI:
 		self.lvl = lvl
 		self.color = color
 		self.book = chess.polyglot.open_reader("/home/alex/Documents/ai/python-chess/data/polyglot/performance.bin")
-		self.apertura = 10 #Turnos que aprovechara de libros de apertura
+		self.apertura = 10 #Cantidad de urnos que aprovechara de libros de apertura
 	def alphaBeta(self, board, alpha, beta, rlvl):
 		if board.fullmove_number - rlvl >= self.lvl:
 			return self.boardEvaluation(board)
-		
-		for i in board.legal_moves:
-			board.push(i)
-			current_eval = self.alphaBeta(board, alpha, beta, rlvl)
-			board.pop()
-			
-			if current_eval >= beta:
-				return beta
-			
-			if current_eval > alpha:
-				alpha = current_eval
-			
-		return alpha
+		if self.color == board.turn:
+			for i in board.legal_moves:
+				board.push(i)
+				alpha = max(self.alphaBeta(board, alpha, beta, rlvl), alpha)
+				board.pop()
+				if(alpha>=beta):
+					return beta
+			return alpha
+		else:
+			for i in board.legal_moves:
+				board.push(i)
+				beta = min(self.alphaBeta(board, alpha, beta, rlvl), beta)
+				board.pop()
+				if(alpha>=beta):
+					return alpha
+			return beta
 	
 	def rootAI(self, board):
 		
-		#Si no han pasado 10 turnos utiliza una apertura de libro
+		#Si ya ha pasado la cantidad de turnos utiliza alphabeta
 		if board.fullmove_number > self.apertura:
 			return self.rootAlphaBeta(board)
 			
-		#Si no, usa alphabeta
+		#Si no, usa una apertura de libro
 		elif board.fullmove_number <= self.apertura:
 			try:
 				return(self.book.find(board).move())
@@ -75,7 +74,8 @@ class chessAI:
 				clear()
 				print(board)
 				print(str(count/len(board.legal_moves)*100) + "% completado")
-
+				
+				
 				if current_eval > max_eval:
 					max_eval = current_eval
 					best_move = move
@@ -90,14 +90,14 @@ class chessAI:
 							len(board.pieces(3,True)) * 3 + \
 							len(board.pieces(4,True)) * 5 + \
 							len(board.pieces(5,True)) * 9 + \
-							len(board.pieces(3,True)) * 200
+							len(board.pieces(6,True)) * 200
 							
 		bMaterialScore = len(board.pieces(1,False)) + \
 							len(board.pieces(2,False)) * 3 + \
 							len(board.pieces(3,False)) * 3 + \
 							len(board.pieces(4,False)) * 5 + \
 							len(board.pieces(5,False)) * 9 + \
-							len(board.pieces(3,False)) * 200
+							len(board.pieces(6,False)) * 200
 		if self.color:
 			return wMaterialScore - bMaterialScore
 		return bMaterialScore - wMaterialScore
