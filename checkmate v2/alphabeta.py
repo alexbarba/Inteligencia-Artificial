@@ -162,7 +162,8 @@ class game:
 		
 		print("El resultado es: " + self.board.result())
 
-game().startgame()
+if __name__ == '__main__':
+	game().startgame()
 
 
 	

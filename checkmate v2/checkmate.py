@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 from PDI import *
 from webcam import *
-from AI.alphabeta import *
+from alphabeta import chessAI
 import threading
 import time
+import chess
 
 size = (600,600)
 
@@ -83,19 +84,18 @@ def boardView(boardImg):
 def testPDI():
 	#Prueba de PDI
 	board = chess.Board()
-	img = cv2.imread("captures/board3.png")
-		
-	img = cv2.resize(img, (650,650))
+	img = cv2.imread("captures/board0.png")
 	
-	boardImg = boardImg(img, board)
-	#boardImg.boardView()
-	#boardImg.drawPieces()
-	#boardImg.boardView()
+	boardimg = boardImg(img, board)
+	#boardimg.boardView()
+	#boardimg.drawPieces()
+	#boardimg.boardView()
 	#cv2.imwrite("test2.jpg", boardImg.img)
 	
 	for m in board.legal_moves:
-		print(str(m)[0],str(m)[1],str(m)[2],str(m)[3])
-		if boardImg.readMove(str(m)):
+		
+		if boardimg.readMove(str(m)):
+			print("se realizo el movimiento ",m)
 			board.push(m)
 			break
 	
@@ -112,5 +112,6 @@ def testWebCam():
 	return cam
 
 if __name__ == '__main__':
-	boardImg = boardImg(img, board)
+	#boardImg = boardImg(img, board)
+	testPDI()
 	

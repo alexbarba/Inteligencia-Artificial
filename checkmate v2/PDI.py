@@ -38,7 +38,7 @@ class pieceDetector:
 
 
 class boardImg():
-	def __init__(self, img=cv2.resize(cv2.imread("board.jpg"),(600,600)), board = chess.Board()):
+	def __init__(self, img=cv2.resize(cv2.imread("captures/board0.png"),(600,600)), board = chess.Board()):
 		
 		self.img = img
 		self.recognizeBoard()
@@ -93,7 +93,7 @@ class boardImg():
 		ratio = img.shape[0] / float(resized.shape[0])
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-		thresh = cv2.threshold(blurred, 110, 255, cv2.THRESH_BINARY)[1]
+		thresh = cv2.threshold(blurred, 150, 255, cv2.THRESH_BINARY)[1]
 		
 		# busca los contornos que tienen los valores del umbral
 		contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
