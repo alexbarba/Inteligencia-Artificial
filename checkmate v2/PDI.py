@@ -7,6 +7,8 @@ from webcam import webcam
 import chess
 import time
 import threading
+
+
 class pieceDetector:
 	def __init__(self):
 		pass

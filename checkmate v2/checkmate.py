@@ -2,6 +2,7 @@
 from PDI import *
 from webcam import *
 from alphabeta import chessAI
+from motor import motor
 import threading
 import time
 import chess
@@ -20,6 +21,9 @@ class player:
 			self.boardImg = boardImg(board)
 		else:
 			self.AI = chessAI(int(input("Lvl de AI (Entero): ")),self.color)
+			self.motores = CNC(pinesX, pinesY)
+			
+
 			
 	def move(self, board):
 		if self.playerType == 1: #Si es humano
@@ -46,6 +50,17 @@ class player:
 		
 	def moveAI(self, board):
 		board.push(self.AI.rootAI(board))
+		self.moveMotor(board.peek().uci())
+	
+	def moveMotor(self, move):
+		fx = ord(move[0]) - 97
+		fy = move[1] - 1
+		tx = ord(move[2]) - 97
+		ty = move[3] - 1
+		self.motores.posiciones([0,0],[fx, fy])
+		self.motores.posiciones([fx,fy], [tx, ty])
+		self.motores.posiciones([tx, ty], [0,0])
+		print("Se termino de mover los motores")
 		
 class game:
 	def __init__(self, board = chess.Board()):
@@ -66,7 +81,7 @@ class game:
 				
 			else: #Si es turno de las negras
 				blackPlayer.move(self.board)
-				self.board.peek()
+				
 		
 		print("El resultado es: " + self.board.result())
 		

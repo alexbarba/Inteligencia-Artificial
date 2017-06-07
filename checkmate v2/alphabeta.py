@@ -1,6 +1,7 @@
 import chess
 import chess.polyglot
 import os
+
 clear = lambda: os.system('clear')
 
 class chessAI:
